@@ -85,12 +85,7 @@ class User(db.Model):
         if not user :
             abort(409, message="Invalid email-id") # avoid un-registered emails.
 
-        return user
-        # if user.passwordHash == data[1]:
-        #     return  user, None
-        # else:
-        #     abort(409,message="ERR05")
-    
+        return user    
 
     @staticmethod
     def check_user(email, password):
@@ -110,7 +105,34 @@ class User(db.Model):
         if User.query.filter_by(emailId=email).first():
             abort(409, message="Email ID not unique.")
 
+    def follow(self, following_id):
+        """ follow a user """
+        f_user = User.query.filter_by(id=following_id).first()
+        if not f_user:
+            abort(400, message="No user with that id exists")
+        self.followingUser.append(f_user)
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except Exception, e:
+            print e
+            db.session.rollback()
+            # logging
 
+    def unfollow(self, unfollowing_id):
+        """ Unfollow a user """
+
+        uf_user = User.query.filter_by(id=unfollowing_id).first()
+        if not uf_user or uf_user not in self.followingUser:
+            abort(400, message="Cannot unfollow")
+        self.followingUser.remove(uf_user)
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except Exception, e:
+            print e
+            db.session.rollback()
+            # logging      
 
 class Posts(db.Model):
     """ Posts by users """

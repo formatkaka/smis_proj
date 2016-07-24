@@ -67,12 +67,31 @@ class UserLogin(Resource):
 
 		return jsonify({'status':'true'})
 
+class FollowFriend(Resource):
+	""" Follow , unfollow """
+
+	def get(self, user_id=None):
+		pass
+
+	def post(self, user_id):
+		user = get_current_user()
+		user.follow(user_id)
+		return jsonify({'status':'true'})
+
+	def put(self, user_id):
+		pass
+
+	def delete(self, user_id):
+		user = get_current_user()
+		user.unfollow(user_id)
+		return jsonify({'status':'true'})
+
 @app.route('/sid')
 def hello():
 	return 'Hello, World!'
 
 api.add_resource(Testing,'/a')
 api.add_resource(UserLogin,'/login')
-
+api.add_resource(FollowFriend,'/following/<string:user_id>')
 # if __name__ == "__main__":
 # 	app.run(debug=True)

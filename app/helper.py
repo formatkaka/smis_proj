@@ -6,6 +6,11 @@ from flask import request
 
 from flask.ext.restful import abort
 
+###########################
+#### HELPER FUNCTIONS #####
+###########################
+
+
 def get_current_user():
 	_user = request.authorization
 
