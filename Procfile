@@ -1,2 +1,2 @@
-web: python runserver.py
+web: runprod:app
 init: python db_create.py
