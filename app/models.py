@@ -9,6 +9,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 
+import time
+
 # from flask.ext.sqlalchemy import relationship
 
 ##### FOLLOWERS TABLE #####
@@ -56,6 +58,7 @@ class User(db.Model):
             print e
             # logging
             abort(500, message="Unkown error occured")
+        return user.gen_auth_token()
 
     def __repr__(self):
         return "Email : {0} , Username : {1} ".format(self.emailId, self.fullName)
@@ -64,7 +67,7 @@ class User(db.Model):
         return (self.passwordHash == password_hash)
 
     def gen_auth_token(self, expiration=None):
-        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        s = Serializer(app.config['SECRET_KEY'], expires_in=6000)
         return s.dumps([self.emailId])
 
     @staticmethod
@@ -117,6 +120,7 @@ class User(db.Model):
         except Exception, e:
             print e
             db.session.rollback()
+            abort(500)
             # logging
 
     def unfollow(self, unfollowing_id):
@@ -132,7 +136,21 @@ class User(db.Model):
         except Exception, e:
             print e
             db.session.rollback()
+            abort(500)
             # logging      
+
+    def post_status(self, status):
+        post = Posts(postContent=status)
+        self.userPosts.append(post)
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except Exception, e:
+            print e
+            db.session.rollback()
+            abort(500)
+            # logging    
+
 
 class Posts(db.Model):
     """ Posts by users """
@@ -142,8 +160,8 @@ class Posts(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     postContent = db.Column(db.String, nullable=False)
-    timePosted = db.Column(db.DateTime, default=datetime.now())
+    timePosted = db.Column(db.Float, default=time.time())
     userId = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    def __repr__(self):
-        return "Post : {0} , Timeposted {1}".format(self.postContent, self.timePosted)
+    # def __repr__(self):
+    #     return "Post : {0} , Timeposted {1}".format(self.postContent, self.timePosted)

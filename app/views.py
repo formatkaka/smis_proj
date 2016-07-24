@@ -8,8 +8,11 @@ from flask import make_response, request, jsonify
 from app import api, app
 
 from input_schemas import user_input, post_input
+from output_schemas import post_output
 
 from helper import *
+
+import itertools
 
 # print 'running'
 
@@ -63,9 +66,9 @@ class UserLogin(Resource):
 		User.unique_email(email)
 
 		### Add user to database ###
-		User.add_user(email=email, password_hash=password_hash, name=data.fullname)
+		return jsonify({'status':User.add_user(email=email, password_hash=password_hash, name=data.fullname)})
 
-		return jsonify({'status':'true'})
+		# return jsonify({'status':'true'})
 
 class FollowFriend(Resource):
 	""" Follow , unfollow """
@@ -86,6 +89,34 @@ class FollowFriend(Resource):
 		user.unfollow(user_id)
 		return jsonify({'status':'true'})
 
+class UserPosts(Resource):
+	""" Fetch and update Posts """
+
+	def get(self):
+		
+		user = get_current_user()
+
+		_posts = [f_user.userPosts for f_user in user.followingUser]
+
+		posts = itertools.chain(*_posts)
+		print list(posts)
+		# return jsonify({'status':'trhue'})
+		print post_output.dump(list(posts))
+
+
+	def post(self):
+
+		user = get_current_user()
+
+		json_data = request.get_json()
+		data, errors = post_input.load(json_data)
+
+		if errors:
+			abort(400)
+
+		user.post_status(data.post_content)
+		return jsonify({'status':'true'})
+
 @app.route('/sid')
 def hello():
 	return 'Hello, World!'
@@ -93,5 +124,6 @@ def hello():
 api.add_resource(Testing,'/a')
 api.add_resource(UserLogin,'/login')
 api.add_resource(FollowFriend,'/following/<string:user_id>')
+api.add_resource(UserPosts, '/post')
 # if __name__ == "__main__":
 # 	app.run(debug=True)

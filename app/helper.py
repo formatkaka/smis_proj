@@ -6,6 +6,8 @@ from flask import request
 
 from flask.ext.restful import abort
 
+from datetime import datetime
+
 ###########################
 #### HELPER FUNCTIONS #####
 ###########################
@@ -30,3 +32,16 @@ def get_current_user():
 		else:
 			return User.check_user(email_or_token, password)
 
+
+def conv_time(unixstamp_or_datetime):
+    if unixstamp_or_datetime is None:
+        return None
+
+
+    if isinstance(unixstamp_or_datetime, datetime):
+        try:
+            return time.mktime(unixstamp_or_datetime.timetuple())
+        except OverflowError:
+            return None
+    else:
+        return datetime.fromtimestamp(unixstamp_or_datetime)

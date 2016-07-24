@@ -21,7 +21,7 @@ class UserReg(Schema):
 class PostsRegClass(object):
 	""" Posts by user """
 
-	def __init__(post_content):
+	def __init__(self, post_content):
 		self.post_content = post_content
 
 class PostsReg(Schema):
@@ -29,7 +29,7 @@ class PostsReg(Schema):
 
 	@post_load
 	def make_post(self, data):
-		return UserRegClass(**data)
+		return PostsRegClass(**data)
 
 
 user_input = UserReg()
