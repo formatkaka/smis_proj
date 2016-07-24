@@ -1,6 +1,6 @@
 from app import db, app
 
-from config import SQLALCHEMY_DATABASE_URI
+# from config import SQLALCHEMY_DATABASE_URI
 
 # print SQLALCHEMY_DATABASE_URI
 
