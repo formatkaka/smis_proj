@@ -9,6 +9,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 
+# from flask.ext.sqlalchemy import relationship
+
 ##### FOLLOWERS TABLE #####
 
 
@@ -35,13 +37,25 @@ class User(db.Model):
     createdTime = db.Column(db.DateTime, default=datetime.now())
     updatedTime = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
     userPosts = db.relationship('Posts', backref='author', lazy='dynamic')
-    followingUser = relationship("User",
+    followingUser = db.relationship("User",
                                    secondary=follow,
                                    primaryjoin=(follow.c.follower_id==id),
                                    secondaryjoin=(follow.c.following_id==id), 
                                    backref=db.backref('followers', lazy='dynamic'),
                                    lazy='dynamic'
                                    )
+
+    @staticmethod
+    def add_user(**kwargs):
+        user = User(emailId=kwargs['email'], passwordHash=kwargs['password_hash'],
+                    fullName=kwargs['name'])
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except Exception, e:
+            print e
+            # logging
+            abort(500, message="Unkown error occured")
 
     def __repr__(self):
         return "Email : {0} , Username : {1} ".format(self.emailId, self.fullName)
@@ -75,7 +89,7 @@ class User(db.Model):
     @staticmethod
     def unique_email(email):
         """ Check if email is unique """
-        if not User.query.filter_by(emailId=email).first():
+        if User.query.filter_by(emailId=email).first():
             abort(409, message="Email ID not unique.")
 
 
