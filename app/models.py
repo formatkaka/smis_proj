@@ -63,7 +63,7 @@ class User(db.Model):
     def check_password_hash(self, password_hash):
         return (self.passwordHash == password_hash)
 
-    def gen_auth_token(expiration):
+    def gen_auth_token(self, expiration=None):
         s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps([self.emailId])
 
@@ -74,18 +74,36 @@ class User(db.Model):
         s = Serializer(app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
+            # print data
         except SignatureExpired:
-            return None, 0  # valid token, but expired
+            data = s.loads(token)  # valid token, but expired
         except BadSignature:
-            return None, 1  # invalid token
-        user = UserReg.query.filter_by(emailId=data[0]).first()
+            abort(401, message="Invalid token.")  # invalid token
+
+        user = User.query.filter_by(emailId=data[0]).first()
+
         if not user :
-            abort(409, message="ERR04")
+            abort(409, message="Invalid email-id") # avoid un-registered emails.
+
+        return user
         # if user.passwordHash == data[1]:
         #     return  user, None
         # else:
         #     abort(409,message="ERR05")
     
+
+    @staticmethod
+    def check_user(email, password):
+        user = User.query.filter_by(emailId=email).first()
+        if not user:
+            abort(401, message="Invalid email-id")
+        else:
+            if user.passwordHash==password:
+                return user
+            else:
+                abort(401, message="Incorrect password")
+
+
     @staticmethod
     def unique_email(email):
         """ Check if email is unique """

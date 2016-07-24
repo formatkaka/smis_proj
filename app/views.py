@@ -9,6 +9,8 @@ from app import api, app
 
 from input_schemas import user_input, post_input
 
+from helper import *
+
 # print 'running'
 
 class Testing(Resource):
@@ -33,8 +35,12 @@ class Testing(Resource):
 class UserLogin(Resource):
 	""" User Registration/Login and change password """
 
+	
 	def get(self):
-		return jsonify({'status':'true'})
+		""" Generate token for new user """
+		user = get_current_user()
+		token = user.gen_auth_token(60)
+		return jsonify({'token':str(token)})
 
 	def post(self):
 		""" Register a new user """
