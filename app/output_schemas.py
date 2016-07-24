@@ -4,10 +4,18 @@ from helper import conv_time
 
 #### User list ####
 
-class UserList(Schema):
+class UsersClass(object):
+	def __init__(self, fullName, user_id):
+		self.fullName = fullName
+		self.user_id = user_id
+
+class UserSchema(Schema):
 	fullName = fields.Str()
-	id = fields.Int()
-	following = fields.Str()
+	user_id = fields.Int()
+
+class UserList(Schema):
+	users = fields.Nested(UserSchema, many=True)
+	following = fields.List(fields.Int())
 
 
 #### Posts ####
@@ -27,3 +35,5 @@ class PostsSchema(Schema):
 	# @pre_load
 	# def 
 post_output = PostsSchema(many=True)
+user_list_output = UserList()
+user_schema = UserSchema(many=True)

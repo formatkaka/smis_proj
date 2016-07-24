@@ -60,8 +60,8 @@ class User(db.Model):
             abort(500, message="Unkown error occured")
         return user.gen_auth_token()
 
-    def __repr__(self):
-        return "Email : {0} , Username : {1} ".format(self.emailId, self.fullName)
+    # def __repr__(self):
+    #     return "Email : {0} , Username : {1} ".format(self.emailId, self.fullName)
 
     def check_password_hash(self, password_hash):
         return (self.passwordHash == password_hash)
