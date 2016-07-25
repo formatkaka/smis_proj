@@ -17,7 +17,7 @@ app.run(host='0.0.0.0', port=port, debug=False)
 logger = logging.getLogger("")
 logger.setLevel(logging.DEBUG)
 
-mail_handler = SMTPHandler(mailhost='smtp.sendgrid.com',
+mail_handler = SMTPHandler(mailhost=('smtp.sendgrid.com',465),
 							fromaddr='college.connect28@gmail.com',
 							toaddrs=ADMINS,
 							subject='logging'
