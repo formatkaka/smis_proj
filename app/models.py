@@ -57,6 +57,7 @@ class User(db.Model):
         except Exception, e:
             print e
             # logging
+            db.session.rollback()
             abort(500, message="Unkown error occured")
         return user.gen_auth_token()
 
