@@ -8,7 +8,8 @@ from flask import make_response, request, jsonify
 from app import api, app
 
 from input_schemas import user_input, post_input
-from output_schemas import post_output, UsersClass, user_list_output, UserList, user_schema
+from output_schemas import post_output, UsersClass, user_list_output
+from output_schemas import UserList, user_schema, PostsClass
 
 from helper import *
 
@@ -85,7 +86,7 @@ class FollowFriend(Resource):
 			users.append(uC)
 
 		_following = [f_user.id for f_user in user.followingUser]
-		print users, _following
+		# print users, _following
 		# print user_schema.dump(users)[0]
 		# final_obj = UserList(users=users, following=_following) 
 		final_obj = dict(users=users, following=_following)
@@ -113,12 +114,19 @@ class UserPosts(Resource):
 		
 		user = get_current_user()
 
-		_posts = [f_user.userPosts for f_user in user.followingUser]
+		__posts = [f_user.userPosts for f_user in user.followingUser]
 
-		posts = itertools.chain(*_posts)
-		print list(posts)
+		_posts = list(itertools.chain(*__posts))
+		
+		posts = []
+
+		for _p in _posts:
+			obj = PostsClass(_p.postContent, _p.timePosted, 
+				 _p.userId)
+			posts.append(obj)
+
 		# return jsonify({'status':'trhue'})
-		print post_output.dump(list(posts))
+		return post_output.dump(posts)[0]
 
 
 	def post(self):

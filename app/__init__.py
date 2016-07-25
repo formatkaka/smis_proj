@@ -18,9 +18,9 @@ app = Flask(__name__)
 
 #### configurations #### 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost:5432/mydb'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost:5432/mydb'
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://rxhordwqbwphri:3PUkwCBHdtLm5DpSYzHnbrhVhY@ec2-54-225-244-221.compute-1.amazonaws.com:5432/dflfqtkdleo3eb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://rxhordwqbwphri:3PUkwCBHdtLm5DpSYzHnbrhVhY@ec2-54-225-244-221.compute-1.amazonaws.com:5432/dflfqtkdleo3eb'
 
 app.config['SECRET_KEY'] = 'too_easy_to_guess_supertramp-sid'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -34,7 +34,7 @@ app.config['MAIL_USERNAME'] = 'collegeconnect'
 app.config['MAIL_PASSWORD'] = 'collegeconnect1234'
 
 
-print 'init'
+# print 'init'
 db = SQLAlchemy(app)
 api = Api(app)
 mail = Mail(app)

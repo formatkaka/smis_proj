@@ -20,12 +20,18 @@ class UserList(Schema):
 
 #### Posts ####
 
+class PostsClass(object):
+
+	def __init__(self, content, _time, user_id):
+		self.post_content = content
+		self.time_posted = _time
+		self.user_id = user_id
 
 class PostsSchema(Schema):
-	postContent = fields.Str()
+	post_content = fields.Str()
 	time_posted = fields.Float()
-	userId = fields.Int()
-	id = fields.Int()
+	user_id = fields.Int()
+	# id = fields.Int()
 
 	# @pre_load
 	# def process_time(self, data):
