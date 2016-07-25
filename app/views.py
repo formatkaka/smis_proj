@@ -124,7 +124,7 @@ class UserPosts(Resource):
 			obj = PostsClass(_p.postContent, _p.timePosted, 
 				 _p.userId)
 			posts.append(obj)
-		raise OverflowError
+		# raise OverflowError
 		# return jsonify({'status':'trhue'})
 		return post_output.dump(posts)[0]
 
