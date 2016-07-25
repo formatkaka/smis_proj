@@ -67,7 +67,7 @@ class UserLogin(Resource):
 		User.unique_email(email)
 
 		### Add user to database ###
-		return jsonify({'status':User.add_user(email=email, password_hash=password_hash, name=data.fullname)})
+		return jsonify({'token':User.add_user(email=email, password_hash=password_hash, name=data.fullname)})
 
 		# return jsonify({'status':'true'})
 
