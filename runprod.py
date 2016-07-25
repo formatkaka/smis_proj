@@ -5,7 +5,7 @@ from logging.handlers import SMTPHandler
 
 import os
 
-from app import 
+# from app import 
 
 ADMINS = ["siddhantloya2008@gmail.com"]
 
