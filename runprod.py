@@ -14,18 +14,18 @@ app.run(host='0.0.0.0', port=port, debug=False)
 
 ##### MAIL HANDLER #####
 
-logger = logging.getLogger("")
-logger.setLevel(logging.DEBUG)
+# app.logger = logging.getLogger("")
+app.logger.setLevel(logging.DEBUG)
 
 mail_handler = SMTPHandler(mailhost=('smtp.sendgrid.com',465),
 							fromaddr='college.connect28@gmail.com',
 							toaddrs=ADMINS,
-							subject='logging'
+							subject='logging',
 							credentials=('collegeconnect','collegeconnect1234'),
 							)
 mail_handler.setLevel(logging.INFO)
 mail_handler.setFormatter("%(asctime)s %(levelname)-5s %(message)s")
 
-logger.addHandler(mail_handler)
+app.logger.addHandler(mail_handler)
 
-mail_handler.info("sdsgf")
+app.logger.info("sdsgf")
