@@ -124,7 +124,7 @@ class UserPosts(Resource):
 			obj = PostsClass(_p.postContent, _p.timePosted, 
 				 _p.userId)
 			posts.append(obj)
-
+		raise OverflowError
 		# return jsonify({'status':'trhue'})
 		return post_output.dump(posts)[0]
 
@@ -142,13 +142,14 @@ class UserPosts(Resource):
 		user.post_status(data.post_content)
 		return jsonify({'status':'true'})
 
+	def put(self):
+		pass
+
+	def delete(self):
+		pass
 
 
-@app.route('/sid')
-def hello():
-	return 'Hello, World!'
-
-api.add_resource(Testing,'/a')
+api.add_resource(Testing,'/')
 api.add_resource(UserLogin,'/login')
 api.add_resource(FollowFriend,'/following/<string:user_id>')
 api.add_resource(UserPosts, '/post')
