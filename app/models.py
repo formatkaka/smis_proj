@@ -58,7 +58,7 @@ class User(db.Model):
             print e
             # logging
             db.session.rollback()
-            abort(500, message="Unkown error occured")
+            abort(500, message="Internal server error.")
         return user.gen_auth_token()
 
     # def __repr__(self):
@@ -107,13 +107,13 @@ class User(db.Model):
     def unique_email(email):
         """ Check if email is unique """
         if User.query.filter_by(emailId=email).first():
-            abort(409, message="Email ID not unique.")
+            abort(409, message="Email ID already registered.")
 
     def follow(self, following_id):
         """ follow a user """
         f_user = User.query.filter_by(id=following_id).first()
         if not f_user:
-            abort(400, message="No user with that id exists")
+            abort(400, message="No user with given id exists")
         self.followingUser.append(f_user)
         try:
             db.session.add(self)
@@ -121,7 +121,7 @@ class User(db.Model):
         except Exception, e:
             print e
             db.session.rollback()
-            abort(500)
+            abort(500, message="Internal server error")
             # logging
 
     def unfollow(self, unfollowing_id):
@@ -137,7 +137,7 @@ class User(db.Model):
         except Exception, e:
             print e
             db.session.rollback()
-            abort(500)
+            abort(500, message="Internal server error")
             # logging      
 
     def post_status(self, status):
