@@ -31,6 +31,20 @@ class PostsReg(Schema):
 	def make_post(self, data):
 		return PostsRegClass(**data)
 
+##### Follow , unfollow user_id #####
+
+class UserFollClass(object):
+
+	def __init__(self, user_id):
+		self.user_id = user_id
+
+class UserFoll(Schema):
+	user_id = fields.Int()
+
+	@post_load
+	def make_foll(self, data):
+		return UserFollClass(**data)
 
 user_input = UserReg()
 post_input = PostsReg() 
+foll_input = UserFoll()

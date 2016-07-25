@@ -7,7 +7,7 @@ from flask import make_response, request, jsonify
 
 from app import api, app
 
-from input_schemas import user_input, post_input
+from input_schemas import user_input, post_input, foll_input
 from output_schemas import post_output, UsersClass, user_list_output
 from output_schemas import UserList, user_schema, PostsClass
 
@@ -66,15 +66,17 @@ class UserLogin(Resource):
 
 		User.unique_email(email)
 
+		token = User.add_user(email=email, password_hash=password_hash, name=data.fullname)
+
 		### Add user to database ###
-		return jsonify({'token':User.add_user(email=email, password_hash=password_hash, name=data.fullname)})
+		return jsonify({'token':token})
 
 		# return jsonify({'status':'true'})
 
 class FollowFriend(Resource):
 	""" Follow , unfollow """
 
-	def get(self, user_id=None):
+	def get(self):
 		user = get_current_user()
 		users_list = User.query.all()
 		users_list.remove(user)
@@ -91,20 +93,24 @@ class FollowFriend(Resource):
 		# final_obj = UserList(users=users, following=_following) 
 		final_obj = dict(users=users, following=_following)
 		data, errors = user_list_output.dump(final_obj)
-		print data, errors
+		# print data, errors
 		return data
 
-	def post(self, user_id):
+	def post(self):
 		user = get_current_user()
-		user.follow(user_id)
+		json_data = request.get_json()
+		data, errors = foll_input.load(json_data)			
+		user.follow(data.user_id)
 		return jsonify({'status':'true'})
 
-	def put(self, user_id):
+	def put(self):
 		pass
 
-	def delete(self, user_id):
+	def delete(self):
 		user = get_current_user()
-		user.unfollow(user_id)
+		json_data = request.get_json()
+		data, errors = foll_input.load(json_data)	
+		user.unfollow(data.user_id)
 		return jsonify({'status':'true'})
 
 class UserPosts(Resource):
@@ -151,7 +157,5 @@ class UserPosts(Resource):
 
 api.add_resource(Testing,'/')
 api.add_resource(UserLogin,'/login')
-api.add_resource(FollowFriend,'/following/<string:user_id>')
+api.add_resource(FollowFriend,'/follow')
 api.add_resource(UserPosts, '/post')
-# if __name__ == "__main__":
-# 	app.run(debug=True)
